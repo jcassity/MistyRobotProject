@@ -1,0 +1,19 @@
+{
+  "Name": "FaceDetection",
+  "UniqueId": "2e5735ea-baf6-4f7b-b401-78b63b3f89be",
+  "Description": "Skill to show if Misty detects a person",
+  "StartupRules": [
+    "Manual",
+    "Robot"
+  ],
+  "Language": "javascript",
+  "BroadcastMode": "verbose",
+  "TimeoutInSeconds": 600,
+  "CleanupOnCancel": true,
+  "WriteToLog": false,
+  "Parameters": {
+    "int": 10,
+    "double": 20.5,
+    "string": "twenty"
+  }
+}
