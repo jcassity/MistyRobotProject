@@ -1,5 +1,8 @@
 // Sets Misty's arms and head to a neutral position, and prints a debug
 // message that the movement is underway.
+
+setTimeout(80000)
+
 misty.Debug("Moving arms and head to neutral position");
 _timeoutToNormal();
 
@@ -24,23 +27,38 @@ function registerFaceDetection() {
     misty.RegisterEvent("FaceDetect", "FaceRecognition", 1000, true);
 }
 
+function uploadImage(imageData) {
+    // JSON body for picture upload
+    var picJSONBody = {
+        'image': imageData,
+        'type' : 'base64',
+        'album': 'Instruder Pictures'
+    };
+misty.SendExternalRequest("POST", "https://api.imgur.com/3/album/<albumhash>/add", "Bearer", "b88eaf0d99ec92004c75d70f872f11449a8b5f3b", JSON.stringify(picJSONBody), false, false, "", "application,json", "imgUploadResponse");
+
+}
+
 function sendPicture() { 
-    misty.Debug("Sending Image to User");
+    misty.Debug("Sending Image to Administrator");
     // Sets up thee JSON body for the Twilio SMS API.
     // Includes the phone number of the recipient and
     // the URL for their photograph on Imgur
     var jsonBody = {
-        'Body': '[••] Greetings from Misty!',
-        'From': '<number-to-send-from>',
-        'To': misty.Get("contact"),
+        'Body': '[••] Intruder Detected!',
+        'From': '+12055286760',
+        'To': '+12514548073',
         'MediaUrl': misty.Get("imageLink")
     };
 
-
     // Sends a request to the Twilio API with our account
     // credentials to send the picture to the person who asked for it
-    var credentials = "<base64-encoded-Twilio-credentials>"
-    misty.SendExternalRequest("POST", "https://api.twilio.com/2010-04-01/Accounts/<account-id>/Messages.json", "Basic", credentials, JSON.stringify(jsonBody), false, false, "", "application/x-www-form-urlencoded");
+    var credentials = "Z2xnMTUyMUBqYWdtYWlsLnNvdXRoYWxhYmFtYS5lZHU6U2VudGluZWxibGFjazMy"
+    misty.SendExternalRequest("POST", "https://api.twilio.com/2010-04-01/Accounts/AC96d4a5fd1672f1e541e17c3e867ca7dd/Messages.json", "Basic", credentials, JSON.stringify(jsonBody), false, false, "", "application/x-www-form-urlencoded");
+}
+
+function _TakePicture(data) {
+    var base64String = data.Result.Base64;
+    uploadImage(base64String);
 }
 
 // Defines how Misty should respond to FaceDetect event messages. Data
@@ -48,11 +66,12 @@ function sendPicture() {
 function _FaceDetect(data) {
 
     if (data.PropertyValue == "unknown person"){
-        misty.TakePicture("Intruder.jpg", 1920, 1080, true);
+        misty.TakePicture("Intruder.jpg", 3840, 2160, true);
         misty.ChangeLED(255, 0, 0);
         misty.PlayAudio("Siren-SoundBible.com-1094437108", 10);
         misty.MoveArmDegrees("both", -80, 100);
         misty.DisplayImage("e_Anger.jpg");
+        sendPicture();
     
     } else {
 
