@@ -32,12 +32,15 @@ function uploadImage(imageData) {
     var picJSONBody = {
         'image': imageData,
         'type' : 'base64',
-        'album': 'Instruder Pictures'
+        //'album': 'Intruder Pictures'
     };
-misty.SendExternalRequest("POST", "https://api.imgur.com/3/album/<albumhash>/add", "Bearer", "b88eaf0d99ec92004c75d70f872f11449a8b5f3b", JSON.stringify(picJSONBody), false, false, "", "application,json", "imgUploadResponse");
-
+misty.SendExternalRequest("POST", "https://api.imgur.com/3/upload", "Bearer", "e53dcff53065d6f", JSON.stringify(picJSONBody), false, false, "", "application,json", "imgUploadResponse");
 }
 
+function _imageUploadResponse(responseData) {
+    misty.Set("imageLink", JSON.parse(responseData.Result.ResponseObject.Data).data.link, false);
+    sendPicture();
+}
 function sendPicture() { 
     misty.Debug("Sending Image to Administrator");
     // Sets up thee JSON body for the Twilio SMS API.
@@ -71,8 +74,10 @@ function _FaceDetect(data) {
         misty.PlayAudio("Siren-SoundBible.com-1094437108", 10);
         misty.MoveArmDegrees("both", -80, 100);
         misty.DisplayImage("e_Anger.jpg");
-        sendPicture();
-    
+        takePicure();
+        _TakePicture();
+        uploadImage();
+        _imageUploadResponse();
     } else {
 
         // Prints a debug message with FaceDetect event data
@@ -86,6 +91,7 @@ function _FaceDetect(data) {
     // Registers for a timer event to invoke the _timeoutToNormal
     // callback function after 5000 milliseconds.
     misty.RegisterTimerEvent("timeoutToNormal", 5000, false);
+    misty.StopFaceDetection();
     
 }
 
