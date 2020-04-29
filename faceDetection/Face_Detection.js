@@ -13,6 +13,8 @@ function uploadImage(imageData) {
         'image': imageData,
         'type' : 'base64'
     };
+    // Token is an oauth2 token that must be generated from your imgur account
+    // Using the client id and secret.
     var token = "27206fad190c305ad4149bdab0378ea9d96cb6d9";
     misty.SendExternalRequest("POST", "https://api.imgur.com/3/image", "Bearer", token, JSON.stringify(picJSONBody), false, false, "", "application/json", "_imageUploadResponse");
 }
@@ -74,6 +76,7 @@ function sendPicture() {
         'MediaUrl': misty.Get("imageLink")
     };
 
+    // Credentials consist of AccountSID:AuthToken base64 encoded.
     var credentials = 'QUM3ZTdjMDZiYTZkMzIxNDMwOWNkYTkxYTkyZWE5ZDU5MTpkMDY3ODlkOWYzMGQwY2UzMjUxMTgzMDIxMTU0ZmZkOA==';
     misty.SendExternalRequest("POST", "https://api.twilio.com/2010-04-01/Accounts/AC7e7c06ba6d3214309cda91a92ea9d591/Messages.json", "Basic", credentials, JSON.stringify(jsonBody), false, false, "", "application/x-www-form-urlencoded");
 }
